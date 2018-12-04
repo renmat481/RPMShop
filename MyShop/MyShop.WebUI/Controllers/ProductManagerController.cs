@@ -61,7 +61,49 @@ namespace MyShop.WebUI.Controllers
         public ActionResult Edit(Product product,string id)
         {
             Product producttoEdit = context.Find(id);
+            if (producttoEdit == null)
+                return HttpNotFound();
+            else
+            {
+                if (!ModelState.IsValid)
+                    return View(product);
 
+                producttoEdit.Category = product.Category;
+                producttoEdit.Description = product.Description;
+                producttoEdit.Name = product.Name;
+                producttoEdit.Price = product.Price;
+                producttoEdit.Image = product.Image;
+
+                context.Commit();
+
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public ActionResult Delete(string id)
+        {
+            Product producttoDelete = context.Find(id);
+            if (producttoDelete == null)
+                return HttpNotFound();
+            else
+                return View(producttoDelete);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public ActionResult ConfirmDelete(Product product,string id)
+        {
+            Product producttoDelete = context.Find(id);
+            if (producttoDelete == null)
+                return HttpNotFound();
+            else
+            {
+                context.Delete(id);
+                context.Commit();
+                return RedirectToAction("Index");
+            }        
+                
         }
     }
 }
